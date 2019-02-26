@@ -153,7 +153,7 @@ class read:
             else:
                 for field in fields:
                     if field.startswith('sam') or field.startswith('bam'):
-                        if field not in parse_codes.keys():
+                        if field not in list(parse_codes.keys()):
                             raise PybamError('\n\nStatic parser field "' + str(field) + '" from fields ' + str(fields) + ' is not known to this version of pybam!\nPrint "pybam.wat" to see available field names with explinations.\n')
                     else:
                         raise PybamError('\n\nStatic parser field "' + str(field) + '" from fields ' + str(fields) + ' does not start with "sam" or "bam" and thus is not an avaliable field for the static parsing.\nPrint "pybam.wat" in interactive python to see available field names with explinations.\n')
@@ -586,7 +586,7 @@ class read:
                 'py4py':py4py,
                 'cigar_codes':cigar_codes
             }
-            exec code in exec_dict            # exec() compiles "code" to real code, creating the "parser" function and adding it to exec_dict['parser']
+            exec(code, exec_dict)            # exec() compiles "code" to real code, creating the "parser" function and adding it to exec_dict['parser']
             return exec_dict['parser']
 
         if fields:
@@ -684,10 +684,10 @@ class read:
                 offset_end = offset+8+(unpack('<i',self.bam[offset+4:offset+8])[0]*py4py[self.bam[offset+3]])
                 tag_data = array(self.bam[offset+3] , self.bam[offset+8:offset_end] )
             else:
-                print 'PYBAM ERROR: I dont know how to parse BAM tags in this format: ',repr(tag_type)
-                print '             This is simply because I never saw this kind of tag during development.'
-                print '             If you could mail the following chunk of text to john at john.uk.com, ill fix this up :)'
-                print repr(tag_type),repr(self.bam[offset+3:end])
+                print('PYBAM ERROR: I dont know how to parse BAM tags in this format: ',repr(tag_type))
+                print('             This is simply because I never saw this kind of tag during development.')
+                print('             If you could mail the following chunk of text to john at john.uk.com, ill fix this up :)')
+                print(repr(tag_type),repr(self.bam[offset+3:end]))
                 exit()
             result.append((tag_name,tag_type,tag_data))
             offset = offset_end
